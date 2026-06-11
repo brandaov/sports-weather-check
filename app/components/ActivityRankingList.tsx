@@ -10,12 +10,11 @@ export function ActivityRankingList({
 
   return (
     <section className="flex w-full flex-col gap-5">
-      <header>
-        <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">
-          {location.name}
-          {location.country ? `, ${location.country}` : ""}
+      <header className="border-b border-slate-200 pb-4 dark:border-slate-800">
+        <h2 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-50">
+          {[location.name, location.country].filter(Boolean).join(", ")}
         </h2>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
           Activities ranked by the next 7 days of weather.
         </p>
       </header>

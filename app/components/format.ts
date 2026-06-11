@@ -1,4 +1,4 @@
-import { Rating } from "@/lib/activities";
+import { ActivityId, Rating } from "@/lib/activities";
 
 export function formatWeekday(isoDate: string): string {
   return new Date(`${isoDate}T00:00:00`).toLocaleDateString("en-US", {
@@ -11,6 +11,17 @@ export function formatDayAndMonth(isoDate: string): string {
     day: "numeric",
     month: "short",
   });
+}
+
+const ACTIVITY_ICONS: Record<ActivityId, string> = {
+  [ActivityId.Skiing]: "⛷️",
+  [ActivityId.Surfing]: "🏄",
+  [ActivityId.OutdoorSightseeing]: "🏞️",
+  [ActivityId.IndoorSightseeing]: "🏛️",
+};
+
+export function activityIcon(id: ActivityId): string {
+  return ACTIVITY_ICONS[id];
 }
 
 const RATING_STYLES: Record<Rating, string> = {
@@ -28,5 +39,5 @@ export function scoreBarClasses(score: number): string {
   if (score >= 75) return "bg-emerald-500";
   if (score >= 55) return "bg-sky-500";
   if (score >= 35) return "bg-amber-500";
-  return "bg-rose-500";
+  return "bg-rose-400";
 }

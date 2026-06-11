@@ -24,6 +24,24 @@ const typeDefs = /* GraphQL */ `
     timezone: String!
   }
 
+  type CitySuggestion {
+    id: Int!
+    name: String!
+    region: String!
+    country: String!
+    latitude: Float!
+    longitude: Float!
+    timezone: String!
+  }
+
+  input LocationInput {
+    name: String!
+    country: String!
+    latitude: Float!
+    longitude: Float!
+    timezone: String!
+  }
+
   type DailyScore {
     date: String!
     score: Int!
@@ -46,7 +64,9 @@ const typeDefs = /* GraphQL */ `
   }
 
   type Query {
+    citySuggestions(query: String!): [CitySuggestion!]!
     activityForecast(city: String!): ActivityForecast!
+    activityForecastForLocation(location: LocationInput!): ActivityForecast!
   }
 `;
 

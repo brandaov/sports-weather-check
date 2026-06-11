@@ -1,10 +1,18 @@
-import { CityNotFoundError, Location, WeatherProviderError } from "./types";
+import {
+  CityNotFoundError,
+  CitySuggestion,
+  Location,
+  WeatherProviderError,
+} from "./types";
 
 const GEOCODING_ENDPOINT = "https://geocoding-api.open-meteo.com/v1/search";
+const SUGGESTION_LIMIT = 5;
 
 interface GeocodingMatch {
+  id: number;
   name: string;
   country?: string;
+  admin1?: string;
   latitude: number;
   longitude: number;
   timezone: string;
@@ -15,13 +23,28 @@ interface GeocodingResponse {
 }
 
 export async function geocodeCity(city: string): Promise<Location> {
-  const query = city.trim();
-  if (!query) {
+  const [bestMatch] = await requestMatches(city, 1);
+  if (!bestMatch) {
     throw new CityNotFoundError(city);
   }
+  return toSuggestion(bestMatch);
+}
 
-  const url = buildGeocodingUrl(query);
-  const response = await fetch(url);
+export async function searchCities(query: string): Promise<CitySuggestion[]> {
+  const matches = await requestMatches(query, SUGGESTION_LIMIT);
+  return matches.map(toSuggestion);
+}
+
+async function requestMatches(
+  query: string,
+  count: number,
+): Promise<GeocodingMatch[]> {
+  const trimmed = query.trim();
+  if (!trimmed) {
+    return [];
+  }
+
+  const response = await fetch(buildGeocodingUrl(trimmed, count));
   if (!response.ok) {
     throw new WeatherProviderError(
       `Geocoding request failed with status ${response.status}.`,
@@ -29,27 +52,24 @@ export async function geocodeCity(city: string): Promise<Location> {
   }
 
   const { results }: GeocodingResponse = await response.json();
-  const bestMatch = results?.[0];
-  if (!bestMatch) {
-    throw new CityNotFoundError(city);
-  }
-
-  return toLocation(bestMatch);
+  return results ?? [];
 }
 
-function buildGeocodingUrl(city: string): string {
+function buildGeocodingUrl(query: string, count: number): string {
   const params = new URLSearchParams({
-    name: city,
-    count: "1",
+    name: query,
+    count: String(count),
     language: "en",
     format: "json",
   });
   return `${GEOCODING_ENDPOINT}?${params}`;
 }
 
-function toLocation(match: GeocodingMatch): Location {
+function toSuggestion(match: GeocodingMatch): CitySuggestion {
   return {
+    id: match.id,
     name: match.name,
+    region: match.admin1 ?? "",
     country: match.country ?? "",
     latitude: match.latitude,
     longitude: match.longitude,

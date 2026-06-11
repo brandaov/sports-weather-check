@@ -6,6 +6,11 @@ export interface Location {
   timezone: string;
 }
 
+export interface CitySuggestion extends Location {
+  id: number;
+  region: string;
+}
+
 export interface DailyForecast {
   date: string;
   temperatureMaxC: number;

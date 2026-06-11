@@ -1,5 +1,6 @@
 import { ActivityRanking } from "@/lib/activities";
 import {
+  activityIcon,
   formatDayAndMonth,
   formatWeekday,
   ratingBadgeClasses,
@@ -14,17 +15,20 @@ export function ActivityScoreCard({
   position: number;
 }) {
   return (
-    <article className="rounded-2xl border border-black/[.08] bg-white p-6 shadow-sm dark:border-white/[.1] dark:bg-zinc-900">
+    <article className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md dark:border-slate-800 dark:bg-slate-900">
       <header className="flex items-start justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <span className="flex size-8 items-center justify-center rounded-full bg-zinc-100 text-sm font-semibold text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
-            {position}
+        <div className="flex items-center gap-4">
+          <span className="flex size-12 items-center justify-center rounded-xl bg-slate-100 text-2xl dark:bg-slate-800">
+            <span aria-hidden="true">{activityIcon(ranking.id)}</span>
           </span>
           <div>
-            <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
+            <h3 className="flex items-center gap-2 text-lg font-semibold text-slate-900 dark:text-slate-50">
+              <span className="text-sm font-normal text-slate-400">
+                #{position}
+              </span>
               {ranking.label}
             </h3>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               {ranking.description}
             </p>
           </div>
@@ -36,35 +40,38 @@ export function ActivityScoreCard({
         </span>
       </header>
 
-      <p className="mt-5 flex items-baseline gap-2">
-        <span className="text-3xl font-bold text-zinc-900 dark:text-zinc-50">
+      <div className="mt-5 flex flex-wrap items-baseline gap-x-2 gap-y-1">
+        <span className="text-3xl font-bold text-slate-900 dark:text-slate-50">
           {ranking.overallScore}
         </span>
-        <span className="text-sm text-zinc-500 dark:text-zinc-400">
+        <span className="text-sm text-slate-500 dark:text-slate-400">
           / 100 average over 7 days
         </span>
-      </p>
+      </div>
 
-      <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-300">
-        Best day: {formatWeekday(ranking.bestDay.date)} — {ranking.bestDay.reason}
+      <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
+        <span className="font-medium text-slate-700 dark:text-slate-200">
+          Best day {formatWeekday(ranking.bestDay.date)}:
+        </span>{" "}
+        {ranking.bestDay.reason}
       </p>
 
       <ol className="mt-5 grid grid-cols-7 gap-2">
         {ranking.dailyScores.map((day) => (
           <li key={day.date} className="text-center" title={day.reason}>
-            <span className="block text-xs font-medium text-zinc-500 dark:text-zinc-400">
+            <span className="block text-xs font-medium text-slate-500 dark:text-slate-400">
               {formatWeekday(day.date)}
             </span>
-            <span className="mt-1 block text-[0.65rem] text-zinc-400 dark:text-zinc-500">
+            <span className="mt-0.5 block text-[0.65rem] text-slate-400 dark:text-slate-500">
               {formatDayAndMonth(day.date)}
             </span>
-            <div className="mt-2 flex h-20 items-end rounded-md bg-zinc-100 dark:bg-zinc-800">
+            <div className="mt-2 flex h-20 items-end rounded-lg bg-slate-100 dark:bg-slate-800">
               <div
-                className={`w-full rounded-md ${scoreBarClasses(day.score)}`}
+                className={`w-full rounded-lg transition-all ${scoreBarClasses(day.score)}`}
                 style={{ height: `${Math.max(day.score, 4)}%` }}
               />
             </div>
-            <span className="mt-1 block text-xs font-semibold text-zinc-700 dark:text-zinc-200">
+            <span className="mt-1 block text-xs font-semibold text-slate-700 dark:text-slate-200">
               {day.score}
             </span>
           </li>

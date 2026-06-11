@@ -1,9 +1,11 @@
 "use client";
 
-import { useActionState } from "react";
+import { startTransition, useActionState } from "react";
 import { getActivityRanking } from "@/app/actions";
 import { initialRankingState } from "@/app/ranking";
 import { ActivityRankingList } from "./ActivityRankingList";
+import { CityCombobox } from "./CityCombobox";
+import { CitySuggestion } from "./useCitySuggestions";
 
 export function CitySearch() {
   const [state, submit, isPending] = useActionState(
@@ -11,22 +13,25 @@ export function CitySearch() {
     initialRankingState,
   );
 
+  function submitSelection(suggestion: CitySuggestion) {
+    const payload = new FormData();
+    payload.set("city", suggestion.name);
+    payload.set("location", JSON.stringify(toLocation(suggestion)));
+    startTransition(() => submit(payload));
+  }
+
   return (
     <div className="flex w-full flex-col gap-8">
       <form action={submit} className="flex w-full flex-col gap-3 sm:flex-row">
-        <input
-          type="text"
-          name="city"
+        <CityCombobox
           defaultValue={state.city}
-          placeholder="Search a city, e.g. Chamonix"
-          aria-label="City"
-          autoComplete="off"
-          className="h-12 flex-1 rounded-full border border-black/[.1] bg-white px-5 text-base text-zinc-900 outline-none transition-colors placeholder:text-zinc-400 focus:border-zinc-400 dark:border-white/[.15] dark:bg-zinc-900 dark:text-zinc-50"
+          isPending={isPending}
+          onSelect={submitSelection}
         />
         <button
           type="submit"
           disabled={isPending}
-          className="h-12 rounded-full bg-zinc-900 px-7 text-base font-medium text-white transition-colors hover:bg-zinc-700 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-300"
+          className="h-14 shrink-0 rounded-2xl bg-sky-600 px-7 text-base font-medium text-white shadow-sm transition-colors hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isPending ? "Checking…" : "Rank activities"}
         </button>
@@ -46,4 +51,14 @@ export function CitySearch() {
       )}
     </div>
   );
+}
+
+function toLocation(suggestion: CitySuggestion) {
+  return {
+    name: suggestion.name,
+    country: suggestion.country,
+    latitude: suggestion.latitude,
+    longitude: suggestion.longitude,
+    timezone: suggestion.timezone,
+  };
 }
