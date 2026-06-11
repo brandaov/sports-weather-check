@@ -9,8 +9,9 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "graphql": "^16.14.2",
+    "graphql-yoga": "^5.21.2",
     "next": "16.2.9",
-    "openmeteo": "^1.2.3",
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },
