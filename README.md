@@ -45,41 +45,21 @@ into layers so that data access, business logic, and UI never bleed into each
 other.
 
 ```mermaid
-flowchart TD
-  subgraph client [Browser]
-    Combobox["CityCombobox"]
-    Hook["useCitySuggestions<br/>(debounce, cache, abort)"]
-    Search["CitySearch"]
-    Action["getActivityRanking<br/>(Server Action)"]
-  end
+flowchart LR
+  User(["User types a city"])
+  UI["Frontend<br/>(React UI)"]
+  API["GraphQL API"]
+  Weather["Open-Meteo<br/>(geocoding + forecast)"]
+  Scoring["Scoring engine<br/>(ranks the 4 activities)"]
+  Result(["Ranked activities"])
 
-  subgraph api [app/api/graphql - GraphQL Yoga]
-    Yoga["GraphQL endpoint /api/graphql"]
-  end
-
-  subgraph domain [lib]
-    Geo["searchCities / geocodeCity<br/>(lib/open-meteo)"]
-    Forecast["fetchSevenDayForecast<br/>(lib/open-meteo)"]
-    Rank["rankActivities<br/>(lib/activities)"]
-  end
-
-  GeoApi["Open-Meteo Geocoding API"]
-  ForecastApi["Open-Meteo Forecast API"]
-  Strategies["scoring strategies"]
-
-  Combobox -->|"typing a city"| Hook
-  Hook -->|"debounced query"| Yoga
-  Combobox -->|"picking a suggestion"| Search
-  Search -->|"FormData + coordinates"| Action
-  Action -->|"POST /api/graphql"| Yoga
-
-  Yoga --> Geo
-  Yoga --> Forecast
-  Yoga --> Rank
-
-  Geo --> GeoApi
-  Forecast --> ForecastApi
-  Rank --> Strategies
+  User --> UI
+  UI <--> API
+  API --> Weather
+  API --> Scoring
+  Scoring --> API
+  API --> Result
+  Result --> UI
 ```
 
 | Layer | Location | Responsibility |
