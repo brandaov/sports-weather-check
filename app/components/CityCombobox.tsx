@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { KeyboardEvent, useId, useRef, useState } from "react";
 import { CitySuggestion, useCitySuggestions } from "./useCitySuggestions";
 
@@ -64,8 +65,8 @@ export function CityCombobox({
 
   return (
     <div className="relative flex-1">
-      <span className="pointer-events-none absolute inset-y-0 left-4 flex items-center text-slate-400">
-        <SearchIcon />
+      <span className="pointer-events-none absolute inset-y-0 left-4 flex items-center">
+        <Image src="/icons/search.svg" alt="" width={20} height={20} aria-hidden="true" />
       </span>
 
       <input
@@ -80,7 +81,7 @@ export function CityCombobox({
           highlighted >= 0 ? `${listboxId}-${highlighted}` : undefined
         }
         autoComplete="off"
-        placeholder="Search a city, e.g. Chamonix"
+        placeholder="Search a city, e.g. Mogi das Cruzes"
         onChange={(event) => handleChange(event.target.value)}
         onKeyDown={handleKeyDown}
         onFocus={() => setIsOpen(true)}
@@ -91,8 +92,15 @@ export function CityCombobox({
       />
 
       {(isLoading || isPending) && (
-        <span className="absolute inset-y-0 right-4 flex items-center text-sky-500">
-          <Spinner />
+        <span className="absolute inset-y-0 right-4 flex items-center">
+          <Image
+            src="/icons/spinner.svg"
+            alt=""
+            width={20}
+            height={20}
+            aria-hidden="true"
+            className="animate-spin"
+          />
         </span>
       )}
 
@@ -120,8 +128,8 @@ export function CityCombobox({
                   : "bg-transparent"
               }`}
             >
-              <span className="text-slate-400">
-                <PinIcon />
+              <span className="flex items-center">
+                <Image src="/icons/pin.svg" alt="" width={16} height={16} aria-hidden="true" />
               </span>
               <span className="flex flex-col">
                 <span className="text-sm font-medium text-slate-900 dark:text-slate-50">
@@ -138,32 +146,5 @@ export function CityCombobox({
         </ul>
       )}
     </div>
-  );
-}
-
-function SearchIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="11" cy="11" r="8" />
-      <path d="m21 21-4.3-4.3" />
-    </svg>
-  );
-}
-
-function PinIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-      <circle cx="12" cy="10" r="3" />
-    </svg>
-  );
-}
-
-function Spinner() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="animate-spin" aria-hidden="true">
-      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="3" strokeOpacity="0.25" />
-      <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-    </svg>
   );
 }
